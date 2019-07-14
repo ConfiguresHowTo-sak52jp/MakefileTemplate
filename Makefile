@@ -35,9 +35,9 @@ TARGET := <NameOfExecutable>
 OBJS := $(notdir $(DUT_C_SRCS) $(DUT_CXX_SRCS) $(TEST_CXX_SRCS))
 OBJS := $(OBJS:.c=.o)
 
-all:$(TARGET) exec_test
+all:$(TARGET)
 
-exec_test:
+exec_test:$(TARGET)
 	./$(TARGET)
 	mkdir -p coverage
 	lcov -q --capture --directory . --output-file lcov.info
