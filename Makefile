@@ -10,9 +10,15 @@ TEST_CXX_SRCS := <BaseNameOfSrcs>
 #-- Test Driverのソースディレクトリ --
 TEST_SRCDIR := $(abspath <PathToDir>)
 
-#-- Coverage測定前提のフラグ設定 --
-CFLAGS := -O0 -g3 -Wall -MMD -fprofile-arcs -ftest-coverage
-CXXFLAGS := $(CFLAGS) -std=c++11
+#-- Coverage測定前提のフラグ設定(DUT) --
+COMMON_FLAGS := -O0 -g3 -Wall -MMD -fprofile-arcs -ftest-coverage
+CFLAGS := $(COMMON_FLAGS) -std=c99
+CXXFLAGS := $(COMMON_FLAGS) -std=c++11
+
+#-- Test DriverはCoverage対象外 --
+COMMON_FLAGS_T := -O0 -g3 -Wall -MMD
+CFLAGS_T := $(COMMON_FLAGS_T) -std=c99
+CXXFLAGS_T := $(COMMON_FLAGS_T) -std=c++11
 
 #-- C++ソースがあったら実行形式ビルダはg++ --
 BUILDER := gcc
@@ -39,7 +45,7 @@ exec_test:
 	genhtml --branch-coverage --output-directory coverage lcov2.info
 
 $(TARGET):$(OBJS)
-	$(BUILDER) $(BUILD_FLAGS) -o $@ $^ -lgcov -lm
+	$(BUILDER) $(BUILD_FLAGS) -o $@ $^ -lgcov -lgtest -lpthread -lm
 
 -include $(OBJS:.o=.d)
 
@@ -55,13 +61,13 @@ realclean: clean
 	gcc -c -o $@ $(CFLAGS) $<
 
 %.o:$(TEST_SRCDIR)/%.c
-	gcc -c -o $@ $(CFLAGS) $<
+	gcc -c -o $@ $(CFLAGS_T) $<
 
 %.o:$(DUT_SRCDIR)/%.cpp
 	g++ -c -o $@ $(CXXFLAGS) $<
 
 %.o:$(TEST_SRCDIR)/%.cpp
-	g++ -c -o $@ $(CXXFLAGS) $<
+	g++ -c -o $@ $(CXXFLAGS_T) $<
 
 
 
