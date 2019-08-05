@@ -34,6 +34,7 @@ TARGET := <NameOfExecutable>
 #--------------------- Rules ---------------------------
 OBJS := $(notdir $(DUT_C_SRCS) $(DUT_CXX_SRCS) $(TEST_CXX_SRCS))
 OBJS := $(OBJS:.c=.o)
+OBJS := $(OBJS:.cpp=.o)
 
 all:$(TARGET)
 
